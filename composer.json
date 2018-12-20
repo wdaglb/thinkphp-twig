@@ -1,0 +1,17 @@
+{
+    "name": "ke/thinkphp-twig",
+    "authors": [
+        {
+            "name": "King east",
+            "email": "1207877378@qq.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"ke\\": "src/"}
+    },
+
+    "require": {
+        "topthink/framework": "5.1.*",
+        "twig/twig": "^2.6"
+    }
+}
