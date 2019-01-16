@@ -40,6 +40,8 @@ class Twig
         'view_depr'   => DIRECTORY_SEPARATOR,
         // 是否开启模板编译缓存,设为false则每次都会重新编译
         'tpl_cache'   => true,
+		// 模板全局变量
+		'tpl_replace_string'=>[],
     ];
 
     public function __construct(App $app, $config = [])
@@ -62,6 +64,10 @@ class Twig
 
         // 添加Request全局变量
         $this->template->addGlobal('Request', $this->app->request);
+		
+		foreach ($this->config['tpl_replace_string'] as $key=>$value) {
+			$this->template->addGlobal($key, $value);
+		}
 
         // 加载拓展库
         if (!empty($config['taglib_extension'])) {
