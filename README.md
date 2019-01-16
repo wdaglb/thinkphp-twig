@@ -1,6 +1,6 @@
 **安装**
 ```$xslt
-composer require ke/thinkphp-twig
+composer require ke/thinkphp-twig dev-master
 ```
 **使用**
 > 需要在template.php里把type节点修改为\\ke\\Twig，如：
