@@ -48,36 +48,6 @@ class Twig
 
     }
 
-    /**
-     * 根据loader渲染模板
-     * @param \Twig_LoaderInterface $loader
-     */
-    protected function getTwigHandle(\Twig_LoaderInterface $loader)
-    {
-        $twig = new \Twig_Environment($loader, [
-            'debug'=>$this->app->isDebug(),
-            'cache'=>$this->app->getRuntimePath() . 'compilation'
-        ]);
-        // 添加url函数
-        $function = new \Twig_Function('url', 'url');
-        $this->template->addFunction($function);
-
-        // 添加Request全局变量
-        $twig->addGlobal('Request', $this->app->request);
-
-        foreach ($this->config['tpl_replace_string'] as $key=>$value) {
-            $twig->addGlobal($key, $value);
-        }
-
-        // 加载拓展库
-        if (!empty($config['taglib_extension'])) {
-            foreach ($config['taglib_extension'] as $ext) {
-                $twig->addExtension(new $ext());
-            }
-        }
-
-        return $twig;
-    }
 
     /**
      * 检测是否存在模板文件
@@ -131,6 +101,39 @@ class Twig
 
         return $this->getTwigHandle($loader)->render('index', $data);
     }
+
+    /**
+     * 根据loader渲染模板
+     * @param \Twig_LoaderInterface $loader
+     * @return \Twig_Environment
+     */
+    protected function getTwigHandle(\Twig_LoaderInterface $loader)
+    {
+        $twig = new \Twig_Environment($loader, [
+            'debug'=>$this->app->isDebug(),
+            'cache'=>$this->app->getRuntimePath() . 'compilation'
+        ]);
+        // 添加url函数
+        $function = new \Twig_Function('url', 'url');
+        $this->template->addFunction($function);
+
+        // 添加Request全局变量
+        $twig->addGlobal('Request', $this->app->request);
+
+        foreach ($this->config['tpl_replace_string'] as $key=>$value) {
+            $twig->addGlobal($key, $value);
+        }
+
+        // 加载拓展库
+        if (!empty($config['taglib_extension'])) {
+            foreach ($config['taglib_extension'] as $ext) {
+                $twig->addExtension(new $ext());
+            }
+        }
+
+        return $twig;
+    }
+
 
     /**
      * 自动定位模板文件
