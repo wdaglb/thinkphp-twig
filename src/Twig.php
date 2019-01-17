@@ -16,14 +16,7 @@ use think\Loader;
 
 class Twig
 {
-    /**
-     * 模板引擎实例
-     * @var \Twig_Environment $template
-     */
-    private $template;
 
-    // 加载器
-    private $loader;
     private $app;
 
     // 模板引擎参数
@@ -53,29 +46,37 @@ class Twig
             $this->config['view_path'] = $app->getModulePath() . 'view' . DIRECTORY_SEPARATOR;
         }
 
-        $this->loader = new \Twig_Loader_Filesystem($this->config['view_path']);
-        $this->template = new \Twig_Environment($this->loader, [
-            'debug'=>$app->isDebug(),
-            'cache'=>$app->getRuntimePath() . 'compilation'
+    }
+
+    /**
+     * 根据loader渲染模板
+     * @param \Twig_LoaderInterface $loader
+     */
+    protected function getTwigHandle(\Twig_LoaderInterface $loader)
+    {
+        $twig = new \Twig_Environment($loader, [
+            'debug'=>$this->app->isDebug(),
+            'cache'=>$this->app->getRuntimePath() . 'compilation'
         ]);
         // 添加url函数
         $function = new \Twig_Function('url', 'url');
         $this->template->addFunction($function);
 
         // 添加Request全局变量
-        $this->template->addGlobal('Request', $this->app->request);
-		
-		foreach ($this->config['tpl_replace_string'] as $key=>$value) {
-			$this->template->addGlobal($key, $value);
-		}
+        $twig->addGlobal('Request', $this->app->request);
+
+        foreach ($this->config['tpl_replace_string'] as $key=>$value) {
+            $twig->addGlobal($key, $value);
+        }
 
         // 加载拓展库
         if (!empty($config['taglib_extension'])) {
             foreach ($config['taglib_extension'] as $ext) {
-                $this->template->addExtension(new $ext());
+                $twig->addExtension(new $ext());
             }
         }
 
+        return $twig;
     }
 
     /**
@@ -98,40 +99,37 @@ class Twig
      * @access public
      * @param  string    $template 模板文件
      * @param  array     $data 模板变量
-     * @param  array     $config 模板参数
-     * @return void
+     * @return string
      */
-    public function fetch($template, $data = [], $config = [])
+    public function fetch($template, $data = [])
     {
+        $twig = $this->getTwigHandle(new \Twig_Loader_Filesystem($this->config['view_path']));
         if ('' == pathinfo($template, PATHINFO_EXTENSION)) {
             // 获取模板文件名
             $template = $this->parseTemplate($template);
         }
 
-        // 模板不存在 抛出异常
-//        if (!is_file($template)) {
-//            throw new TemplateNotFoundException('template not exists:' . $template, $template);
-//        }
-
         // 记录视图信息
         $this->app
             ->log('[ VIEW ] ' . $template . ' [ ' . var_export(array_keys($data), true) . ' ]');
 
-        $this->template->display($template, $data);
-        // $this->template->fetch($template, $data, $config);
+        return $twig->render($template, $data);
     }
 
     /**
      * 渲染模板内容
      * @access public
-     * @param  string    $template 模板内容
+     * @param  string    $content 模板内容
      * @param  array     $data 模板变量
-     * @param  array     $config 模板参数
-     * @return void
+     * @return string
      */
-    public function display($template, $data = [], $config = [])
+    public function display($content, $data = [])
     {
-        $this->template->display($template, $data);
+        $loader = new \Twig_Loader_Array([
+            'index'=>$content
+        ]);
+
+        return $this->getTwigHandle($loader)->render('index', $data);
     }
 
     /**
@@ -144,21 +142,6 @@ class Twig
     {
         // 分析模板文件规则
         $request = $this->app['request'];
-
-        // 获取视图根目录
-        if (strpos($template, '@')) {
-            // 跨模块调用
-            list($module, $template) = explode('@', $template);
-        }
-
-//        if ($this->config['view_base']) {
-//            // 基础视图目录
-//            $module = isset($module) ? $module : $request->module();
-//            $path   = $this->config['view_base'] . ($module ? $module . DIRECTORY_SEPARATOR : '');
-//        } else {
-//            $path = isset($module) ? $this->app->getAppPath() . $module . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR : $this->config['view_path'];
-//        }
-
         $depr = $this->config['view_depr'];
 
         if (0 !== strpos($template, '/')) {
@@ -188,33 +171,4 @@ class Twig
         return isset($rule[$type]) ? $rule[$type] : $rule[0];
     }
 
-    /**
-     * 配置或者获取模板引擎参数
-     * @access private
-     * @param  string|array  $name 参数名
-     * @param  mixed         $value 参数值
-     * @return mixed
-     */
-    public function config($name, $value = null)
-    {
-        if (is_array($name)) {
-            $this->template->config($name);
-            $this->config = array_merge($this->config, $name);
-        } elseif (is_null($value)) {
-            return $this->template->config($name);
-        } else {
-            $this->template->$name = $value;
-            $this->config[$name]   = $value;
-        }
-    }
-
-    public function __call($method, $params)
-    {
-        return call_user_func_array([$this->template, $method], $params);
-    }
-
-    public function __debugInfo()
-    {
-        return ['config' => $this->config];
-    }
 }
