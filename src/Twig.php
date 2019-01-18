@@ -83,7 +83,7 @@ class Twig
         $this->app
             ->log('[ VIEW ] ' . $template . ' [ ' . var_export(array_keys($data), true) . ' ]');
 
-        return $twig->render($template, $data);
+        $twig->display($template, $data);
     }
 
     /**
@@ -99,7 +99,7 @@ class Twig
             'index'=>$content
         ]);
 
-        return $this->getTwigHandle($loader)->render('index', $data);
+        return $this->getTwigHandle($loader)->display('index', $data);
     }
 
     /**
