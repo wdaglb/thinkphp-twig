@@ -1,5 +1,9 @@
 {
     "name": "ke/thinkphp-twig",
+    "keywords": [
+        "twig",
+        "thinkphp"
+    ],
     "authors": [
         {
             "name": "King east",
@@ -9,9 +13,10 @@
     "autoload": {
         "psr-4": {"ke\\": "src/"}
     },
-
     "require": {
-        "topthink/framework": "5.1.*",
         "twig/twig": "^2.6"
+    },
+    "require-dev":  {
+        "topthink/framework": "5.1.*"
     }
 }

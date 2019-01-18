@@ -28,13 +28,9 @@ class Twig
         // 模板起始路径
         'view_path'   => '',
         // 模板文件后缀
-        'view_suffix' => 'html',
+        'view_suffix' => 'twig',
         // 模板文件名分隔符
         'view_depr'   => DIRECTORY_SEPARATOR,
-        // 是否开启模板编译缓存,设为false则每次都会重新编译
-        'tpl_cache'   => true,
-		// 模板全局变量
-		'tpl_replace_string'=>[],
     ];
 
     public function __construct(App $app, $config = [])
@@ -69,7 +65,6 @@ class Twig
      * @access public
      * @param  string    $template 模板文件
      * @param  array     $data 模板变量
-     * @return string
      */
     public function fetch($template, $data = [])
     {
@@ -91,7 +86,6 @@ class Twig
      * @access public
      * @param  string    $content 模板内容
      * @param  array     $data 模板变量
-     * @return string
      */
     public function display($content, $data = [])
     {
@@ -99,7 +93,7 @@ class Twig
             'index'=>$content
         ]);
 
-        return $this->getTwigHandle($loader)->display('index', $data);
+        $this->getTwigHandle($loader)->display('index', $data);
     }
 
     /**
@@ -111,20 +105,16 @@ class Twig
     {
         $twig = new \Twig_Environment($loader, [
             'debug'=>$this->app->isDebug(),
-            'cache'=>$this->app->getRuntimePath() . 'compilation'
+            'cache'=>$this->app->getRuntimePath() . 'twig_compilation'
         ]);
-        // 添加url函数
-        $function = new \Twig_Function('url', 'url');
-        $twig->addFunction($function);
+        // 注册url函数
+        $twig->addFunction(new \Twig_Function('url', 'url'));
 
-        // 添加Request全局变量
+        // 注册Request全局变量
         $twig->addGlobal('Request', $this->app->request);
 
+        // 注册Config全局变量
         $twig->addGlobal('Config', $this->app->config);
-
-        foreach ($this->config['tpl_replace_string'] as $key=>$value) {
-            $twig->addGlobal($key, $value);
-        }
 
         // 加载拓展库
         if (!empty($this->config['taglib_extension'])) {
