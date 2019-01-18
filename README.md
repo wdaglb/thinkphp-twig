@@ -21,6 +21,12 @@ _PS:官方的tpl_begin,tpl_end,taglib_begin,taglib_end配置节点是无效的_
 {{ Request.get.page }}
 ```
 
+> 使用Config对象
+```
+// 判断当前是否调试
+{{ Config.app_debug }}
+```
+
 > if判断
 ```
 {% if condition %}
