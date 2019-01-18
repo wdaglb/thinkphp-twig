@@ -115,7 +115,7 @@ class Twig
         ]);
         // 添加url函数
         $function = new \Twig_Function('url', 'url');
-        $this->template->addFunction($function);
+        $twig->addFunction($function);
 
         // 添加Request全局变量
         $twig->addGlobal('Request', $this->app->request);
