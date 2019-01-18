@@ -50,16 +50,6 @@ _PS:官方的tpl_begin,tpl_end,taglib_begin,taglib_end配置节点是无效的_
 {% endfor %}
 ```
 
-**注册全局变量**
-```
-    'tpl_replace_string'=>[
-        '__STATIC__'=>'/static'
-    ]
-```
-就可以在模板使用
-```
-{{ __STATIC__ }}
-```
 
 **注册拓展库**
 
