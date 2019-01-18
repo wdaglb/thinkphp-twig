@@ -120,13 +120,15 @@ class Twig
         // 添加Request全局变量
         $twig->addGlobal('Request', $this->app->request);
 
+        $twig->addGlobal('Config', $this->app->config);
+
         foreach ($this->config['tpl_replace_string'] as $key=>$value) {
             $twig->addGlobal($key, $value);
         }
 
         // 加载拓展库
-        if (!empty($config['taglib_extension'])) {
-            foreach ($config['taglib_extension'] as $ext) {
+        if (!empty($this->config['taglib_extension'])) {
+            foreach ($this->config['taglib_extension'] as $ext) {
                 $twig->addExtension(new $ext());
             }
         }
