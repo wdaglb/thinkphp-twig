@@ -11,7 +11,6 @@
 namespace ke;
 
 use think\App;
-use think\exception\TemplateNotFoundException;
 use think\Loader;
 
 class Twig
@@ -23,14 +22,14 @@ class Twig
     protected $config = [
         // 默认模板渲染规则 1 解析为小写+下划线 2 全部转换小写
         'auto_rule'   => 1,
-        // 视图基础目录（集中式）
-        'view_base'   => '',
         // 模板起始路径
         'view_path'   => '',
         // 模板文件后缀
         'view_suffix' => 'twig',
         // 模板文件名分隔符
         'view_depr'   => DIRECTORY_SEPARATOR,
+        // 扩展库
+        'extension'=>[]
     ];
 
     public function __construct(App $app, $config = [])
@@ -107,8 +106,6 @@ class Twig
             'debug'=>$this->app->isDebug(),
             'cache'=>$this->app->getRuntimePath() . 'twig_compilation'
         ]);
-        // 注册url函数
-        $twig->addFunction(new \Twig_Function('url', 'url'));
 
         // 注册Request全局变量
         $twig->addGlobal('Request', $this->app->request);
@@ -116,9 +113,18 @@ class Twig
         // 注册Config全局变量
         $twig->addGlobal('Config', $this->app->config);
 
+        // 注册配置项全局变量
+        if (!empty($this->config['global_vars'])) {
+            foreach ($this->config['global_vars'] as $name=>$value) {
+                $twig->addGlobal($name, $value);
+            }
+        }
+
         // 加载拓展库
-        if (!empty($this->config['taglib_extension'])) {
-            foreach ($this->config['taglib_extension'] as $ext) {
+        $twig->addExtension(new Extension());
+
+        if (!empty($this->config['extension'])) {
+            foreach ($this->config['extension'] as $ext) {
                 $twig->addExtension(new $ext());
             }
         }

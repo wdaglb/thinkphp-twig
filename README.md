@@ -10,6 +10,27 @@ composer require ke/thinkphp-twig
 ```
 _PS:官方的tpl_begin,tpl_end,taglib_begin,taglib_end配置节点是无效的_
 
+**注册全局变量**
+
+```
+    'global_vars'=>[
+        '__STATIC__'=>'/static'
+    ]
+```
+
+
+**注册拓展库**
+
+> twig不支持直接使用php的函数,但是可以经过拓展定义使用
+
+```
+// 在template.php的taglib_extension里传入类名，如（必须是数组）：
+    'taglib_extension'=>[
+        \taglib\Lib::class
+    ]
+```
+
+
 > 生成url
 ```$xslt
 {{ url('index') }}
@@ -34,6 +55,17 @@ _PS:官方的tpl_begin,tpl_end,taglib_begin,taglib_end配置节点是无效的_
 {% else %}
 假
 {% endif %}
+
+// 判断变量是否定义
+{% if item is defined %}
+变量已定义
+{% endif %}
+
+// 判断变量是否为空
+{% if item is null %}
+变量为空
+{% endif %}
+
 ```
 
 > 循环一个数组
@@ -41,6 +73,14 @@ _PS:官方的tpl_begin,tpl_end,taglib_begin,taglib_end配置节点是无效的_
 {% for item in array %}
     {{ item.name }}
 {% endfor %}
+
+
+{% for index, item in array %}
+    {{ index }}:
+    {{ item.name }}
+{% endfor %}
+
+
 ```
 
 > 指定次数循环
@@ -50,14 +90,7 @@ _PS:官方的tpl_begin,tpl_end,taglib_begin,taglib_end配置节点是无效的_
 {% endfor %}
 ```
 
-
-**注册拓展库**
-
-> twig不支持直接使用php的函数,但是可以经过拓展定义使用
-
+> 注释
 ```
-// 在template.php的taglib_extension里传入类名，如（必须是数组）：
-    'taglib_extension'=>[
-        \taglib\Lib::class
-    ]
+{# 注释内容 #}
 ```
