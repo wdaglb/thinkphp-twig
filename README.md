@@ -80,6 +80,12 @@ _PS:官方的tpl_begin,tpl_end,taglib_begin,taglib_end配置节点是无效的_
     {{ item.name }}
 {% endfor %}
 
+{% for item in array %}
+    * {{ item.name }}
+{% else %}
+    No array have been found.
+{% endfor %}
+
 
 ```
 
