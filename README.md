@@ -24,8 +24,8 @@ _PS:官方的tpl_begin,tpl_end,taglib_begin,taglib_end配置节点是无效的_
 > twig不支持直接使用php的函数,但是可以经过拓展定义使用
 
 ```
-// 在template.php的taglib_extension里传入类名，如（必须是数组）：
-    'taglib_extension'=>[
+// 在template.php的extension里传入类名，如（必须是数组）：
+    'extension'=>[
         \taglib\Lib::class
     ]
 ```
