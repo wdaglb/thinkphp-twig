@@ -11,7 +11,10 @@
 namespace ke;
 
 
-class Extension extends \Twig_Extension
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
+
+class Extension extends AbstractExtension
 {
     public function getFunctions()
     {
@@ -19,11 +22,11 @@ class Extension extends \Twig_Extension
             /**
              * url生成
              */
-            new \Twig_Function('url', 'url'),
+            new TwigFunction('url', 'url'),
             /**
              * 加载资源文件
              */
-            new \Twig_Function('load', function ($str) {
+            new TwigFunction('load', function ($str) {
                 $load = function ($str) {
                     $ext = pathinfo($str, PATHINFO_EXTENSION);
                     if ($ext === 'js') {

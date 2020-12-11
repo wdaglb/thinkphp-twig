@@ -1,13 +1,15 @@
 **安装**
-```$xslt
+```
 composer require ke/thinkphp-twig
 ```
+
 **使用**
 > 需要在template.php里把type节点修改为\\ke\\Twig，如：
-```$xslt
+```
 'type'         => \ke\Twig::class,
 'view_suffix'  => 'twig',
 ```
+
 _PS:官方的tpl_begin,tpl_end,taglib_begin,taglib_end配置节点是无效的_
 
 **注册全局变量**
@@ -32,12 +34,12 @@ _PS:官方的tpl_begin,tpl_end,taglib_begin,taglib_end配置节点是无效的_
 
 
 > 生成url
-```$xslt
+```
 {{ url('index') }}
 ```
 
 > 使用Request对象
-```$xslt
+```
 // 读取$_GET['page']
 {{ Request.get.page }}
 ```

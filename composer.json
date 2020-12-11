@@ -14,7 +14,7 @@
         "psr-4": {"ke\\": "src/"}
     },
     "require": {
-        "twig/twig": "2.6"
+        "twig/twig": "^3.0"
     },
     "require-dev":  {
         "topthink/framework": "5.1.*"

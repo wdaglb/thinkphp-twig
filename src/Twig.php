@@ -12,6 +12,10 @@ namespace ke;
 
 use think\App;
 use think\Loader;
+use Twig\Environment as TwigEnvironment;
+use Twig\Loader\ArrayLoader;
+use Twig\Loader\FilesystemLoader;
+use Twig\Loader\LoaderInterface;
 
 class Twig
 {
@@ -26,6 +30,8 @@ class Twig
         'view_path'   => '',
         // 模板文件后缀
         'view_suffix' => 'twig',
+        // 资源文件目录
+        'asset_path'  => '/static',
         // 模板文件名分隔符
         'view_depr'   => DIRECTORY_SEPARATOR,
         // 扩展库
@@ -67,7 +73,7 @@ class Twig
      */
     public function fetch($template, $data = [])
     {
-        $twig = $this->getTwigHandle(new \Twig_Loader_Filesystem($this->config['view_path']));
+        $twig = $this->getTwigHandle(new FilesystemLoader($this->config['view_path']));
         if ('' == pathinfo($template, PATHINFO_EXTENSION)) {
             // 获取模板文件名
             $template = $this->parseTemplate($template);
@@ -88,7 +94,7 @@ class Twig
      */
     public function display($content, $data = [])
     {
-        $loader = new \Twig_Loader_Array([
+        $loader = new ArrayLoader([
             'index'=>$content
         ]);
 
@@ -97,12 +103,12 @@ class Twig
 
     /**
      * 根据loader渲染模板
-     * @param \Twig_LoaderInterface $loader
-     * @return \Twig_Environment
+     * @param LoaderInterface $loader
+     * @return TwigEnvironment
      */
-    protected function getTwigHandle(\Twig_LoaderInterface $loader)
+    protected function getTwigHandle(LoaderInterface $loader)
     {
-        $twig = new \Twig_Environment($loader, [
+        $twig = new TwigEnvironment($loader, [
             'debug'=>$this->app->isDebug(),
             'cache'=>$this->app->getRuntimePath() . 'twig_compilation'
         ]);
