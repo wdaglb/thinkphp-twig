@@ -121,11 +121,11 @@ class Twig
         }
 
         // 加载拓展库
-        $twig->addExtension(new Extension());
+        $twig->addExtension(new Extension($this->config));
 
         if (!empty($this->config['extension'])) {
             foreach ($this->config['extension'] as $ext) {
-                $twig->addExtension(new $ext());
+                $twig->addExtension(new $ext($this->config));
             }
         }
 
