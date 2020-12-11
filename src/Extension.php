@@ -35,15 +35,13 @@ class Extension extends AbstractExtension
             /**
              * 加载资源文件
              */
-            new TwigFunction('load', function ($str) {
-                $load = function ($str) {
-                    $ext = pathinfo($str, PATHINFO_EXTENSION);
-
+            new TwigFunction('load', function ($type, $str) {
+                $load = function ($str) use($type) {
                     $str = $this->config['asset_path'] . $str;
-                    if ($ext === 'js') {
+                    if ($type === 'js') {
                         echo "<script src=\"{$str}\"></script>";
                         return;
-                    } elseif ($ext === 'css') {
+                    } elseif ($type === 'css') {
                         echo '<link rel="stylesheet" href="' . $str . '">';
                         return;
                     }
