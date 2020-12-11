@@ -24,6 +24,7 @@ class Twig
         'auto_rule'   => 1,
         // 模板起始路径
         'view_path'   => '',
+        'asset_path'  => '',
         // 模板文件后缀
         'view_suffix' => 'twig',
         // 模板文件名分隔符
