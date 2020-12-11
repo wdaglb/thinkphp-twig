@@ -16,6 +16,15 @@ use Twig\TwigFunction;
 
 class Extension extends AbstractExtension
 {
+    protected $config = [];
+
+
+    public function __construct($config)
+    {
+        $this->config = $config;
+    }
+
+
     public function getFunctions()
     {
         return [
@@ -29,22 +38,26 @@ class Extension extends AbstractExtension
             new TwigFunction('load', function ($str) {
                 $load = function ($str) {
                     $ext = pathinfo($str, PATHINFO_EXTENSION);
+
+                    $str = $this->config['asset_path'] . $str;
                     if ($ext === 'js') {
-                        return "<script src=\"{$str}\"></script>";
+                        echo "<script src=\"{$str}\"></script>";
+                        return;
                     } elseif ($ext === 'css') {
-                        return '<link rel="stylesheet" href="' . $str . '">';
+                        echo '<link rel="stylesheet" href="' . $str . '">';
+                        return;
                     }
-                    return $str;
+                    echo $str;
                 };
                 if (strpos($str, ',') === false) {
-                    return $load($str);
+                    echo $load($str);
                 } else {
                     $e = '';
                     $tmp = explode(',', $str);
                     foreach ($tmp as $s) {
                         $e .= $load($s);
                     }
-                    return $e;
+                    echo $e;
                 }
             })
         ];
