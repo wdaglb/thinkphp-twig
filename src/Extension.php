@@ -11,16 +11,21 @@
 namespace ke;
 
 
+use think\facade\App;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class Extension extends AbstractExtension
 {
+    protected $isDebug = false;
+
+
     protected $config = [];
 
 
     public function __construct($config)
     {
+        $this->isDebug = App::isDebug();
         $this->config = $config;
     }
 
@@ -35,7 +40,10 @@ class Extension extends AbstractExtension
             /**
              * 加载资源文件
              */
-            new TwigFunction('load', function ($type, $str) {
+            new TwigFunction('load', function ($type, $str, $noCache = false) {
+                if (!$noCache && $this->isDebug) {
+                    $str .= '?v=' . time();
+                }
                 $load = function ($str) use($type) {
                     $str = $this->config['asset_path'] . $str;
                     if ($type === 'js') {
